@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Request Out of Shift</title>
+</head>
+<body>
+    <h1>Request Out of Shift</h1>
+
+    <form method="POST">
+        <!-- Dropdown for selecting role and initials -->
+        <label for="role_initials">Select Your Role:</label><br>
+        <select id="role_initials" name="role_initials" required>
+            <option value="">Select a Role</option>
+
+            <!-- Roles for Setup -->
+            <optgroup label="Setup">
+                {% for person in assignments["Setup"] %}
+                    <option value="Setup - {{ person }}">Setup - {{ person }}</option>
+                {% endfor %}
+            </optgroup>
+
+            <!-- Roles for Shift 1 -->
+            <optgroup label="Shift 1 (9:45-11:00)">
+                {% for role, people in assignments["Shift 1"].items() %}
+                    {% for person in people %}
+                        <option value="Shift 1 - {{ role }} - {{ person }}">{{ role }} - {{ person }}</option>
+                    {% endfor %}
+                {% endfor %}
+            </optgroup>
+
+            <!-- Roles for Shift 2 -->
+            <optgroup label="Shift 2 (11:00-12:15AM)">
+                {% for role, people in assignments["Shift 2"].items() %}
+                    {% for person in people %}
+                        <option value="Shift 2 - {{ role }} - {{ person }}">{{ role }} - {{ person }}</option>
+                    {% endfor %}
+                {% endfor %}
+            </optgroup>
+
+            <!-- Roles for Cleanup -->
+            <optgroup label="Cleanup">
+                {% for person in assignments["Cleanup"] %}
+                    <option value="Cleanup - {{ person }}">Cleanup - {{ person }}</option>
+                {% endfor %}
+            </optgroup>
+        </select><br><br>
+
+        <!-- Textbox for description -->
+        <label for="description">Reason (Optional):</label><br>
+        <textarea id="description" name="description" rows="4" cols="50"></textarea><br><br>
+
+        <!-- Submit button -->
+        <button type="submit">Submit Request</button>
+    </form>
+
+    <!-- Link back to the main assignments page -->
+    <a href="{{ url_for('index') }}">Back to Assignments</a>
+</body>
+</html>

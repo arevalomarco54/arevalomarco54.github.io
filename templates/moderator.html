@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Moderator Approval Page</title>
+</head>
+<body>
+    <h1>Moderator Approval Page</h1>
+
+    {% if requests %}
+        {% for req in requests %}
+            <!-- Form to approve each request -->
+            <form method="POST">
+                <!-- Display request details -->
+                <p>{{ req.initials }} requested out of {{ req.role }} in {{ req.shift }}</p>
+
+                {% if req.description %}
+                    <p><strong>Reason:</strong> {{ req.description }}</p>
+                {% endif %}
+
+                <!-- Hidden inputs to pass data -->
+                <input type="hidden" name="role_initials" value="{{ req.shift }} - {{ req.role }} - {{ req.initials }}">
+
+                <!-- Approve button -->
+                <button type="submit">Approve Request</button><br><br>
+            </form>
+        {% endfor %}
+    {% else %}
+        <!-- No pending requests message -->
+        <p>No pending requests.</p>
+    {% endif %}
+        <!-- Assign Button -->
+        <form method="POST" action="{{ url_for('assign_tasks_route') }}">
+            <button type="submit">Reassign All Tasks</button>
+        </form>
+    
+        <hr>
+    
+        <!-- Manual Edit Section -->
+        <h2>Manual Edit</h2>
+    
+        <form method="POST" action="{{ url_for('edit_task') }}">
+            <!-- Setup Section -->
+            <h3>Setup</h3>
+            {% for person in assignments["Setup"] %}
+                <label for="setup_{{ loop.index }}">Setup {{ loop.index }}:</label>
+                <select id="setup_{{ loop.index }}" name="setup_{{ loop.index }}">
+                    {% for p in sorted_people %}
+                        <option value="{{ p.initials }}" {% if p.initials == person %}selected{% endif %}>
+                            {{ p.initials }}
+                        </option>
+                    {% endfor %}
+                </select><br>
+            {% endfor %}
+    
+            <!-- Shift 1 Section -->
+            <h3>Shift 1 (9:45-11:00)</h3>
+            {% for role, people in assignments["Shift 1"].items() %}
+                <label>{{ role }}:</label><br>
+                {% for person in people %}
+                    <select name="shift1_{{ role }}_{{ loop.index }}">
+                        {% for p in sorted_people %}
+                            <option value="{{ p.initials }}" {% if p.initials == person %}selected{% endif %}>
+                                {{ p.initials }}
+                            </option>
+                        {% endfor %}
+                    </select><br>
+                {% endfor %}
+            {% endfor %}
+    
+            <!-- Shift 2 Section -->
+            <h3>Shift 2 (11:00-12:15AM)</h3>
+            {% for role, people in assignments["Shift 2"].items() %}
+                <label>{{ role }}:</label><br>
+                {% for person in people %}
+                    <select name="shift2_{{ role }}_{{ loop.index }}">
+                        {% for p in sorted_people %}
+                            <option value="{{ p.initials }}" {% if p.initials == person %}selected{% endif %}>
+                                {{ p.initials }}
+                            </option>
+                        {% endfor %}
+                    </select><br>
+                {% endfor %}
+            {% endfor %}
+    
+            <!-- Cleanup Section -->
+            <h3>Cleanup</h3>
+            {% for person in assignments["Cleanup"] %}
+                <label for="cleanup_{{ loop.index }}">Cleanup {{ loop.index }}:</label>
+                <select id="cleanup_{{ loop.index }}" name="cleanup_{{ loop.index }}">
+                    {% for p in sorted_people %}
+                        <option value="{{ p.initials }}" {% if p.initials == person %}selected{% endif %}>
+                            {{ p.initials }}
+                        </option>
+                    {% endfor %}
+                </select><br>
+            {% endfor %}
+    
+            <!-- Save Button -->
+            <button type="submit">Save Changes</button>
+        </form>
+    
+    
+    <!-- Links -->
+    <a href="{{ url_for('index') }}">Back to Assignments</a><br>
+    <a href="{{ url_for('moderator_logout') }}">Logout</a>
+</body>
+</html>

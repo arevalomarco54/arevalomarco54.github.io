@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Assignments</title>
+</head>
+<body>
+    <h1>Task Assignments</h1>
+
+    <!-- Setup Section -->
+    <h2>Setup</h2>
+    <ul>
+        {% for person in assignments["Setup"] %}
+            <li>{{ person }}</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Shift 1 Section -->
+    <h2>Shift 1 (9:45-11:00)</h2>
+    <ul>
+        {% for role, people in assignments["Shift 1"].items() %}
+            <li><strong>{{ role }}:</strong> {{ ", ".join(people) }}</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Shift 2 Section -->
+    <h2>Shift 2 (11:00-12:15AM)</h2>
+    <ul>
+        {% for role, people in assignments["Shift 2"].items() %}
+            <li><strong>{{ role }}:</strong> {{ ", ".join(people) }}</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Cleanup Section -->
+    <h2>Cleanup</h2>
+    <ul>
+        {% for person in assignments["Cleanup"] %}
+            <li>{{ person }}</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Links -->
+    <a href="{{ url_for('request_shift') }}">Request Out of Shift</a><br>
+    <a href="{{ url_for('moderator') }}">Moderator Page</a>
+</body>
+</html>
