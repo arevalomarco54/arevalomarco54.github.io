@@ -40,11 +40,6 @@ def sort_people(people):
         i = j + 1
     return sorted_people
 
-# Assign tasks based on the updated structure
-import random
-
-import random
-
 def assign_tasks(sorted_people):
     tasks = {
         "Setup": 3,
@@ -444,4 +439,5 @@ def moderator_logout():
     return redirect(url_for("index"))
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=10000)
+
