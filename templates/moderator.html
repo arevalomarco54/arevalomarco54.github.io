@@ -33,7 +33,15 @@
         <form method="POST" action="{{ url_for('assign_tasks_route') }}">
             <button type="submit">Reassign All Tasks</button>
         </form>
-    
+        <!-- Clear All Assignments Button -->
+    <form method="POST" action="{{ url_for('clear_all_assignments') }}">
+        <button type="submit" style="background-color: red; color: white;">Clear All Assignments</button>
+    </form>
+    <!-- Add to Point Count Button -->
+    <form method="POST" action="{{ url_for('add_to_point_count') }}">
+        <button type="submit" style="background-color: blue; color: white;">Add to Point Count</button>
+    </form>
+
         <hr>
     
         <!-- Manual Edit Section -->

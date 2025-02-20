@@ -187,9 +187,21 @@ def load_people(filename="people_data.json"):
         return []
 
 # Save updated people data to the JSON file
-def save_people(data, filename="people_data.json"):
+def save_people(people, filename="people_data.json"):
+    """
+    Saves a list of Person objects to a JSON file.
+
+    Args:
+        people (list): A list of Person objects.
+        filename (str): The name of the JSON file to save to.
+    """
+    # Convert the list of Person objects into dictionaries
+    data = [{"initials": p.initials, "seniority": p.seniority, "points": p.points} for p in people]
+
+    # Save the data to a JSON file
     with open(filename, "w") as file:
         json.dump(data, file, indent=4)
+
 
 # Load pending requests from a JSON file
 def load_requests(filename="requests.json"):
@@ -216,6 +228,46 @@ def assign_tasks_route():
     
     ASSIGNMENTS = assign_tasks(SORTED_PEOPLE[:])
     return redirect(url_for("moderator"))
+
+@app.route("/clear_all_assignments", methods=["POST"])
+def clear_all_assignments():
+    global ASSIGNMENTS, SORTED_PEOPLE, DO_NOT_ASSIGN
+    DO_NOT_ASSIGN = []
+    # Reset ASSIGNMENTS to default empty structure
+    ASSIGNMENTS = {
+        "Setup": [],
+        "Shift 1": {
+            "Bar": [],
+            "Couch": [],
+            "Inner Door": [],
+            "Coat Check": [],
+            "Table": [],
+            "Outer Door": [],
+            "Sober": [],
+            "DJ": []
+        },
+        "Shift 2": {
+            "Bar": [],
+            "Couch": [],
+            "Inner Door": [],
+            "Coat Check": [],
+            "Table": [],
+            "Outer Door": [],
+            "Sober": [],
+            "DJ": []
+        },
+        "Cleanup": []
+    }
+
+    # Reset SORTED_PEOPLE if needed (optional)
+    SORTED_PEOPLE = sort_people(PEOPLE)
+
+    # Clear pending requests
+    with open("requests.json", "w") as file:
+        file.write("")  # Empty the file
+
+    return redirect(url_for("moderator"))
+
 @app.route("/edit_task", methods=["POST"])
 def edit_task():
     global ASSIGNMENTS
@@ -241,6 +293,24 @@ def edit_task():
     # Update Cleanup
     cleanup_keys = [key for key in request.form.keys() if key.startswith("cleanup")]
     ASSIGNMENTS["Cleanup"] = [request.form[key] for key in cleanup_keys]
+
+    return redirect(url_for("moderator"))
+@app.route("/add_to_point_count", methods=["POST"])
+def add_to_point_count():
+    # Load people data from JSON
+    global PEOPLE
+    # Increment points for everyone
+    for person in PEOPLE:
+        if (
+                person.initials in ASSIGNMENTS["Setup"]
+                or person.initials in ASSIGNMENTS["Cleanup"]
+                or any(person.initials in people for people in ASSIGNMENTS["Shift 1"].values())
+                or any(person.initials in people for people in ASSIGNMENTS["Shift 2"].values())
+            ):
+            person.points += 1
+
+    # Save updated data back to JSON
+    save_people(PEOPLE)
 
     return redirect(url_for("moderator"))
 
